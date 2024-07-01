@@ -1,0 +1,17 @@
+{
+  "name": "translate_ins",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.19.0",
+    "dotenv": "^16.4.5",
+    "jquery": "^3.7.1",
+    "jsdom": "^24.1.0"
+  }
+}
