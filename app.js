@@ -20,9 +20,8 @@ const app = new App({
 
 
 // Listens to incoming messages that contain "hello"
-app.message('', async ({ message, say }) => {
+app.message('', async ({ message, client, say }) => {
   // say() sends a message to the channel where the event was triggered
-  console.log(message);
 
   $.ajax({
     url: 'http://127.0.0.1:5000/translate',
@@ -35,28 +34,28 @@ app.message('', async ({ message, say }) => {
     success: async function(response) {
       console.log(response);
       let resText = response.translation;
+      await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText});
 
-      await say({
-        blocks: [
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              // "text": `Hey there <@${message.user}>!`
-              "text": `${resText}`
-            },
-            "accessory": {
-              "type": "button",
-              "text": {
-                "type": "plain_text",
-                "text": "Click Me"
-              },
-              "action_id": "button_click"
-            }
-          }
-        ],
-        text: `Hey there <@${message.user}>!`
-      });
+      // await say({
+      //   blocks: [
+      //     {
+      //       "type": "section",
+      //       "text": {
+      //         "type": "mrkdwn",
+      //         "text": `${resText}`
+      //       },
+      //       "accessory": {
+      //         "type": "button",
+      //         "text": {
+      //           "type": "plain_text",
+      //           "text": "Click Me"
+      //         },
+      //         "action_id": "button_click"
+      //       }
+      //     }
+      //   ],
+      //   text: `Hey there <@${message.user}>!`
+      // });
       // Do something with the translated text
     },
     error: function(error) {
