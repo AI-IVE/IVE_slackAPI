@@ -34,51 +34,63 @@ app.message('', async ({ message, client, say }) => {
     success: async function(response) {
       console.log(response);
       let resText = response.translation;
-      await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText});
 
-      // await say({
-      //   blocks: [
-      //     {
-      //       "type": "section",
-      //       "text": {
-      //         "type": "mrkdwn",
-      //         "text": `${resText}`
-      //       },
-      //       "accessory": {
-      //         "type": "button",
-      //         "text": {
-      //           "type": "plain_text",
-      //           "text": "Click Me"
-      //         },
-      //         "action_id": "button_click"
-      //       }
-      //     }
-      //   ],
-      //   text: `Hey there <@${message.user}>!`
-      // });
-      // Do something with the translated text
+      let textBlocks = [
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": `${message.text}`
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": ":kr: :arrow_right: :jp:"
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": `${resText}`
+          }
+        },
+        {
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "_Tranlated from InswaVE BOT._"
+          },
+          "accessory": {
+            "type": "button",
+            "text": {
+              "type": "plain_text",
+              "text": "RE-Translation",
+              "emoji": true
+            },
+            "action_id": "retranslate"
+          }
+        },
+        {
+          "type": "divider"
+        }
+      ];
+
+      // await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText});
+      await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText, blocks: textBlocks});
     },
     error: function(error) {
       console.error(error);
     }
   });
-  // console.log(resText);
-  
-  
-  
   
 });
 
-app.action('button_click', async ({ body, ack, say }) => {
+app.action({action_id: 'retranslate'}, async ({ body, client, ack }) => {
   // Acknowledge the action
   await ack();
-  console.log(body);
-  // await fetch('http://127.0.0.1:5000/translate', {
-  //   'body': {
-  //     "text":"안녕하세요.등록하신 메일 주소로 개발 라이선스 전달드렸습니다.확인 부탁드립니다.감사합니다. ",
-  //     "model" :"claude"
-  //   }
-  // });
   await say(`<@${body.user.id}> clicked the button`);
 });
 
