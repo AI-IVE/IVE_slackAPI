@@ -28,12 +28,18 @@ app.message('', async ({ message, client, say }) => {
     method: 'POST',
     data: JSON.stringify({
       text: message.text,
-      model: 'gpt4'
+      model: 'claude'
     }),
     contentType: 'application/json',
     success: async function(response) {
       console.log(response);
-      let resText = response.translation;
+      const resText = response.translation;
+      let resLang = `:${response.return_lang}:`;
+      let orgLang = ':kr:';
+      if(response.return_lang == 'ko') {
+        resLang = ':kr:';
+        orgLang = ':jp:';
+      }
 
       let textBlocks = [
         {
@@ -47,7 +53,7 @@ app.message('', async ({ message, client, say }) => {
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": ":kr: :arrow_right: :jp:"
+            "text": `${orgLang} :arrow_right: ${resLang}`
           }
         },
         {
