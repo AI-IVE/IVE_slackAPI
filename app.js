@@ -32,7 +32,6 @@ app.message('', async ({ message, client, say }) => {
     }),
     contentType: 'application/json',
     success: async function(response) {
-      console.log(response);
       const resText = response.translation;
       let resLang = `:${response.return_lang}:`;
       let orgLang = ':kr:';
@@ -65,19 +64,20 @@ app.message('', async ({ message, client, say }) => {
         },
         {
           "type": "section",
+          "block_id": "replay-block",
           "text": {
             "type": "mrkdwn",
-            "text": "_Tranlated from InswaVE BOT._"
-          },
-          "accessory": {
-            "type": "button",
-            "text": {
-              "type": "plain_text",
-              "text": "RE-Translation",
-              "emoji": true
-            },
-            "action_id": "retranslate"
+            "text": "> _This message was translated by_ *InswaVE* _BOT._"
           }
+          // "accessory": {
+          //   "type": "button",
+          //   "text": {
+          //     "type": "plain_text",
+          //     "text": "RE-Translation"
+          //   },
+          //   "value": "click_me_123",
+          //   "action_id": "re-translate"
+          // }
         },
         {
           "type": "divider"
@@ -87,14 +87,16 @@ app.message('', async ({ message, client, say }) => {
       // await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText});
       await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: resText, blocks: textBlocks});
     },
-    error: function(error) {
+    error: async function(error) {
       console.error(error);
+      await client.chat.update({token:process.env.SLACK_USER_TOKEN, channel: message.channel, ts: message.ts, text: message.text});
+
     }
   });
   
 });
 
-app.action({action_id: 'retranslate'}, async ({ body, client, ack }) => {
+app.action('re-translate', async ({ body, ack, say }) => {
   // Acknowledge the action
   await ack();
   await say(`<@${body.user.id}> clicked the button`);
